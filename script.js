@@ -1,162 +1,88 @@
 const REGISTRY = {
-    browser: { title: "Web Explorer", icon: "🌐", content: `
-        <div class="browser-nav">
-            <input type="text" id="url-in" placeholder="Search Google or type URL..." onkeypress="if(event.key==='Enter') execSearch()">
-            <button onclick="execSearch()">Go</button>
-        </div>
-        <iframe id="b-frame" src="https://www.bing.com"></iframe>`
-    },
-    dungeon: { title: "Dungeon Gamblers", icon: "🃏", content: `
-        <iframe srcdoc="<html><head><base href='https://cdn.jsdelivr.net/gh/Stinkalistic/UGS@main/MISC/dungeongamble/'><style>body,html{margin:0;padding:0;overflow:hidden;background:black;}</style></head><body><script src='gamble.js'></script><canvas id='canvas' style='width:100vw; height:100vh;'></canvas><script>window.onload=function(){const c={'args':[],'canvasResizePolicy':2,'executable':'gamble','fileSizes':{'index.pck':97937408,'gamble.wasm':25658069},'focusCanvas':true};var e=new Engine(c);e.startGame();}</script></body></html>"></iframe>`
-    },
-    knights: { title: "Knights Battle", icon: "⚔️", content: `
-        <iframe srcdoc="<html><body style='margin:0;overflow:hidden;background:black;'><script src='https://cdn.jsdelivr.net/gh/pegege-classroom/swwq@main/Build/War The Knights Battle Arena Swords 3D.loader.js'></script><canvas id='u-canvas' style='width:100vw;height:100vh;'></canvas><script>const c={dataUrl:'https://cdn.jsdelivr.net/gh/pegege-classroom/swwq@main/Build/War The Knights Battle Arena Swords 3D.data.unityweb',frameworkUrl:'https://cdn.jsdelivr.net/gh/pegege-classroom/swwq@main/Build/War The Knights Battle Arena Swords 3D.framework.js.unityweb',codeUrl:'https://cdn.jsdelivr.net/gh/pegege-classroom/swwq@main/Build/War The Knights Battle Arena Swords 3D.wasm.unityweb',companyName:'BANZAI',productName:'War Knights'};createUnityInstance(document.querySelector('#u-canvas'),c);</script></body></html>"></iframe>`
-    },
-    hacker: { title: "Terminal", icon: "💀", content: `
-        <div class="terminal">
-            <div id="h-log">[LOCAL NODE ACTIVE] Type 'print message' to broadcast.</div>
-            <span style="color:#39ff14">root@uOS:~$ </span><input type="text" id="h-in" onkeypress="hackerExec(event)" style="background:none; border:none; color:#39ff14; outline:none; width:70%; font-family:monospace;">
-        </div>`
-    },
-    calc: { title: "Calculator", icon: "🔢", content: `
-        <div style="padding:15px; background:#000; text-align:right; font-size:24px;" id="c-disp">0</div>
-        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:5px; padding:10px;">
-            ${['7','8','9','/','4','5','6','*','1','2','3','-','0','.','=','+'].map(v=>`<button style='padding:15px;background:#333;color:white;border:none;' onclick="calc('${v}')">${v}</button>`).join('')}
-        </div>`
-    },
-    store: { title: "U-Store", icon: "🏪", content: `
-        <div style="padding:20px;">
-            <h3>App Repository</h3>
-            <div id="store-target"></div>
-        </div>`
+    browser: { title: "Google Explorer", icon: "🌐", content: `<div style="height:40px;background:#222;display:flex;"><input type="text" id="url-in" style="flex:1;background:#000;color:#fff;border:none;padding:5px;" value="https://www.bing.com"><button onclick="document.getElementById('b-frame').src=document.getElementById('url-in').value">GO</button></div><iframe id="b-frame" src="https://www.bing.com" style="width:100%;height:calc(100% - 40px);border:none;"></iframe>` },
+    
+    dungeon: { title: "Dungeon Gamblers", icon: "🃏", content: `<iframe style="width:100%;height:100%;border:none;" srcdoc="<html><head><base href='https://cdn.jsdelivr.net/gh/Stinkalistic/UGS@main/MISC/dungeongamble/'><style>body,html{margin:0;padding:0;overflow:hidden;background:black;}</style></head><body><script src='gamble.js'></script><canvas id='canvas' style='width:100vw; height:100vh;'></canvas><script>window.onload=function(){const c={'args':[],'canvasResizePolicy':2,'executable':'gamble','fileSizes':{'index.pck':97937408,'gamble.wasm':25658069},'focusCanvas':true};var e=new Engine(c);e.startGame();}</script></body></html>"></iframe>` },
+    
+    knights: { title: "Knights Battle", icon: "⚔️", content: `<iframe style="width:100%;height:100%;border:none;" srcdoc="<html><body style='margin:0;overflow:hidden;background:black;'><script src='https://cdn.jsdelivr.net/gh/pegege-classroom/swwq@main/Build/War The Knights Battle Arena Swords 3D.loader.js'></script><canvas id='u-canvas' style='width:100vw;height:100vh;'></canvas><script>const c={dataUrl:'https://cdn.jsdelivr.net/gh/pegege-classroom/swwq@main/Build/War The Knights Battle Arena Swords 3D.data.unityweb',frameworkUrl:'https://cdn.jsdelivr.net/gh/pegege-classroom/swwq@main/Build/War The Knights Battle Arena Swords 3D.framework.js.unityweb',codeUrl:'https://cdn.jsdelivr.net/gh/pegege-classroom/swwq@main/Build/War The Knights Battle Arena Swords 3D.wasm.unityweb',companyName:'BANZAI',productName:'War Knights'};createUnityInstance(document.querySelector('#u-canvas'),c);</script></body></html>"></iframe>` },
+    
+    hacker: { title: "Terminal", icon: "💀", content: `<div style="background:#000;color:#0f0;height:100%;padding:10px;font-family:monospace;" id="term-out">root@uOS:~$ <input type="text" onkeypress="handleTerm(event)" style="background:none;border:none;color:#0f0;outline:none;width:70%;"></div>` },
+    
+    store: { title: "U-Store", icon: "🏪", content: `<div style="padding:20px;"><h3>Available Apps</h3><button onclick="createShortcut('calc')">Install Calculator</button></div>` },
+    
+    calc: { title: "Calculator", icon: "🔢", content: `<div id="c-res" style="padding:20px;font-size:30px;text-align:right;">0</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:10px;">${['7','8','9','/','4','5','6','*','1','2','3','-','0','.','=','+'].map(v=>`<button style="padding:15px;" onclick="doCalc('${v}')">${v}</button>`).join('')}</div>` }
+};
+
+function attemptLogin() {
+    const u = document.getElementById('username').value;
+    const p = document.getElementById('password').value;
+    if(u === "hacker" && p === "admin") {
+        document.getElementById('boot-screen').classList.add('unlocked');
+        // AUTO-LOAD GAMES TO DESKTOP
+        ['store', 'browser', 'hacker', 'dungeon', 'knights'].forEach(id => createShortcut(id));
+    } else {
+        document.getElementById('login-err').innerText = "DENIED";
     }
-};
-
-const INITIAL_APPS = ['store', 'browser', 'hacker'];
-const STORE_CATALOG = ['dungeon', 'knights', 'calc'];
-
-window.onload = () => {
-    INITIAL_APPS.forEach(id => createShortcut(id));
-    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
-};
+}
 
 function createShortcut(id) {
-    if(document.getElementById(`icon-${id}`)) return;
-    const desktop = document.getElementById('desktop');
-    const div = document.createElement('div');
-    div.className = 'shortcut'; div.id = `icon-${id}`;
-    div.onclick = () => openApp(id);
-    div.innerHTML = `<span>${REGISTRY[id].icon}</span><span>${REGISTRY[id].title}</span>`;
-    desktop.appendChild(div);
+    if(document.getElementById('icon-'+id)) return;
+    const d = document.getElementById('desktop');
+    const s = document.createElement('div');
+    s.className = 'shortcut'; s.id = 'icon-'+id;
+    s.onclick = () => openApp(id);
+    s.innerHTML = `<span>${REGISTRY[id].icon}</span><span>${REGISTRY[id].title}</span>`;
+    d.appendChild(s);
 }
 
 function openApp(id) {
-    const app = REGISTRY[id];
-    const winId = `win-${id}-${Math.floor(Math.random()*1000)}`;
+    const winId = 'win-'+Math.random().toString(36).substr(2,9);
     const win = document.createElement('div');
     win.className = 'window'; win.id = winId;
-    win.style.width = "600px"; win.style.height = "450px";
     win.style.top = "50px"; win.style.left = "100px";
-
-    win.innerHTML = `
-        <div class="win-header">
-            <div class="win-controls">
-                <button class="control-btn close" onclick="closeApp('${winId}')"></button>
-                <button class="control-btn max" onclick="toggleMax('${winId}')"></button>
-                <button class="control-btn min" onclick="alert('App minimized')"></button>
-            </div>
-            <span>${app.icon} ${app.title}</span>
-        </div>
-        <div class="win-body">${id === 'store' ? renderStore() : app.content}</div>
-        <div class="resizer"></div>
-    `;
-
+    win.innerHTML = `<div class="win-header"><span>${REGISTRY[id].icon} ${REGISTRY[id].title}</span><div class="win-controls"><button style="background:#febc2e" onclick="document.getElementById('${winId}').classList.toggle('maximized')"></button><button style="background:#ff5f56" onclick="this.closest('.window').remove()"></button></div></div><div class="win-body">${REGISTRY[id].content}</div><div class="resizer"></div>`;
     document.getElementById('desktop').appendChild(win);
-    initDrag(win); initResize(win); addTab(app.title, winId);
+    makeDraggable(win); makeResizable(win);
 }
 
-function renderStore() {
-    return STORE_CATALOG.map(id => `
-        <div class="store-item">
-            <span>${REGISTRY[id].icon} ${REGISTRY[id].title}</span>
-            <button onclick="createShortcut('${id}')" style="background:#0078d4; color:white; border:none; padding:5px 12px; border-radius:4px; cursor:pointer;">Install</button>
-        </div>
-    `).join('');
+function makeDraggable(el) {
+    const h = el.querySelector('.win-header');
+    h.onmousedown = (e) => {
+        let ox = e.clientX - el.offsetLeft, oy = e.clientY - el.offsetTop;
+        document.onmousemove = (e) => { el.style.left = (e.clientX - ox)+'px'; el.style.top = (e.clientY - oy)+'px'; };
+        document.onmouseup = () => { document.onmousemove = null; };
+    };
 }
 
-// BROWSER GOOGLE SEARCH LOGIC
-window.execSearch = () => {
-    const val = document.getElementById('url-in').value;
-    const frame = document.getElementById('b-frame');
-    if (!val.startsWith('http')) {
-        frame.src = "https://www.bing.com/search?q=" + encodeURIComponent(val);
-    } else {
-        frame.src = val;
-    }
-};
-
-// HACKER BROADCAST LOGIC
-window.hackerExec = (e) => {
-    if(e.key === 'Enter') {
-        const input = document.getElementById('h-in');
-        if(input.value.startsWith('print ')) {
-            const msg = input.value.substring(6);
-            const overlay = document.createElement('div');
-            overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,0,0,0.9); z-index:10000; color:white; display:flex; align-items:center; justify-content:center; font-size:40px; text-align:center; padding:20px; font-family:monospace;";
-            overlay.innerHTML = `[BROADCAST INCOMING]<br>${msg.toUpperCase()}`;
-            document.body.appendChild(overlay);
-            setTimeout(() => overlay.remove(), 3000);
-        }
-        input.value = "";
-    }
-};
-
-// WINDOW CONTROLS
-window.closeApp = (id) => { 
-    document.getElementById(id).remove(); 
-    document.querySelector(`[data-ref="${id}"]`).remove();
-};
-
-window.toggleMax = (id) => {
-    document.getElementById(id).classList.toggle('maximized');
-};
-
-function addTab(title, id) {
-    const tab = document.createElement('div');
-    tab.className = 'tab'; tab.innerText = title; tab.setAttribute('data-ref', id);
-    document.getElementById('active-tabs').appendChild(tab);
-}
-
-// DRAG & RESIZE ENGINES
-function initResize(win) {
-    const resizer = win.querySelector('.resizer');
-    resizer.onmousedown = (e) => {
+function makeResizable(el) {
+    const r = el.querySelector('.resizer');
+    r.onmousedown = (e) => {
         e.preventDefault();
         window.onmousemove = (e) => {
-            win.style.width = (e.pageX - win.getBoundingClientRect().left) + 'px';
-            win.style.height = (e.pageY - win.getBoundingClientRect().top) + 'px';
+            el.style.width = (e.pageX - el.offsetLeft)+'px';
+            el.style.height = (e.pageY - el.offsetTop)+'px';
         };
         window.onmouseup = () => { window.onmousemove = null; };
     };
 }
 
-function initDrag(win) {
-    const header = win.querySelector('.win-header');
-    header.onmousedown = (e) => {
-        if(win.classList.contains('maximized')) return;
-        let ox = e.clientX - win.offsetLeft;
-        let oy = e.clientY - win.offsetTop;
-        document.onmousemove = (e) => {
-            win.style.left = (e.clientX - ox) + 'px';
-            win.style.top = (e.clientY - oy) + 'px';
-        };
-        document.onmouseup = () => { document.onmousemove = null; };
-    };
+function doCalc(v) {
+    const res = document.getElementById('c-res');
+    if(v === '=') res.innerText = eval(res.innerText);
+    else res.innerText = res.innerText === '0' ? v : res.innerText + v;
 }
 
-window.calc = (v) => {
-    const d = document.getElementById('c-disp');
-    if(v === '=') { try{ d.innerText = eval(d.innerText); } catch{ d.innerText = "Error"; } }
-    else if(d.innerText === '0' || d.innerText === 'Error') { d.innerText = v; }
-    else { d.innerText += v; }
-};
+function handleTerm(e) {
+    if(e.key === 'Enter') {
+        const v = e.target.value;
+        if(v.startsWith('print ')) {
+            const m = document.createElement('div');
+            m.style = "position:fixed;top:0;left:0;width:100%;height:100%;background:red;z-index:10000;display:flex;align-items:center;justify-content:center;font-size:50px;";
+            m.innerText = v.substring(6).toUpperCase();
+            document.body.appendChild(m);
+            setTimeout(() => m.remove(), 2000);
+        }
+        e.target.value = '';
+    }
+}
+
+setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
