@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Untitled OS | Pro Edition</title>
+    <title>Untitled OS | Secure</title>
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
     <div id="boot-screen">
         <div class="login-box">
-            <div class="user-avatar">💀</div>
-            <h2>Untitled OS</h2>
-            <input type="text" id="username" placeholder="Alias (hacker)">
-            <input type="password" id="password" placeholder="Keycode (admin)">
-            <button onclick="attemptLogin()">AUTHENTICATE</button>
+            <div class="user-avatar">🔒</div>
+            <h2>System Locked</h2>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="attemptLogin()">LOGIN</button>
             <div id="login-err"></div>
         </div>
     </div>
 
     <div id="desktop"></div>
 
-    <div id="taskbar">
+    <div id="taskbar" style="display:none;">
         <div class="start-btn">U</div>
         <div id="active-tabs"></div>
         <div id="clock">00:00:00</div>
