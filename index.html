@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Untitled OS | Secure</title>
+    <title>Untitled OS | Secure Kernel</title>
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
     <div id="boot-screen">
         <div class="login-box">
-            <div class="user-avatar">🔒</div>
-            <h2>System Locked</h2>
-            <input type="text" id="username" placeholder="Username">
-            <input type="password" id="password" placeholder="Password">
-            <button onclick="attemptLogin()">LOGIN</button>
+            <div class="shield-icon">🔒</div>
+            <input type="text" id="username" spellcheck="false" autocomplete="off">
+            <input type="password" id="password" autocomplete="off">
+            <button onclick="attemptLogin()">ENTER</button>
             <div id="login-err"></div>
         </div>
     </div>
