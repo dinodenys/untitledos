@@ -1,54 +1,39 @@
+* { box-sizing: border-box; }
 body, html { 
     margin: 0; padding: 0; height: 100%; overflow: hidden; 
-    background: radial-gradient(circle, #0f172a 0%, #020617 100%);
-    font-family: 'Inter', sans-serif; color: white;
+    background: #020617; /* Fallback color */
+    background: radial-gradient(circle, #1e293b 0%, #020617 100%);
+    font-family: sans-serif; color: white;
 }
 
 #desktop { 
     width: 100vw; height: calc(100vh - 50px); position: relative; 
-    padding: 30px; display: flex; flex-direction: column; gap: 20px; flex-wrap: wrap; 
+    padding: 20px; display: flex; flex-direction: column; gap: 15px; flex-wrap: wrap; 
 }
 
 .shortcut { 
-    width: 85px; text-align: center; cursor: pointer; padding: 10px; 
-    border-radius: 12px; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 80px; text-align: center; cursor: pointer; padding: 10px; 
+    border-radius: 8px; transition: 0.2s; background: rgba(255,255,255,0.05);
 }
-.shortcut:hover { background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); transform: translateY(-5px); }
-.shortcut span { display: block; font-size: 11px; margin-top: 8px; font-weight: 500; }
+.shortcut:hover { background: rgba(255,255,255,0.2); }
+.shortcut span { display: block; font-size: 10px; margin-top: 5px; }
 
 .window {
-    position: absolute; min-width: 420px; min-height: 350px;
-    background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px;
-    display: flex; flex-direction: column; box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-    z-index: 10;
+    position: absolute; width: 350px; height: 300px;
+    background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px;
+    display: flex; flex-direction: column; z-index: 100;
 }
 
 .win-header { 
-    background: rgba(255,255,255,0.05); padding: 12px 18px; 
-    display: flex; justify-content: space-between; align-items: center;
-    cursor: move; border-top-left-radius: 15px; border-top-right-radius: 15px;
+    background: rgba(255,255,255,0.1); padding: 8px 12px; 
+    display: flex; justify-content: space-between; cursor: move; 
 }
 
-.win-body { flex: 1; padding: 20px; overflow: auto; }
+.win-body { flex: 1; padding: 15px; overflow: auto; }
 
 #taskbar { 
     position: fixed; bottom: 0; width: 100%; height: 50px; 
-    background: rgba(0,0,0,0.85); display: flex; align-items: center; 
-    justify-content: space-between; padding: 0 25px; border-top: 1px solid #222; z-index: 1000;
-}
-
-/* App Styles */
-.terminal { background: #000; color: #39ff14; font-family: 'Courier New', monospace; padding: 15px; height: 85%; border-radius: 6px; }
-#editor { width: 100%; height: 200px; background: #0f172a; color: #38bdf8; border: 1px solid #334155; padding: 12px; border-radius: 6px; font-family: monospace; }
-.file-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; transition: 0.2s; }
-.file-item:hover { background: rgba(59, 130, 246, 0.3); }
-
-@keyframes glitch {
-    0% { transform: translate(0); }
-    20% { transform: translate(-3px, 3px); filter: hue-rotate(90deg); }
-    40% { transform: translate(-3px, -3px); }
-    60% { transform: translate(3px, 3px); filter: hue-rotate(180deg); }
-    80% { transform: translate(3px, -3px); }
-    100% { transform: translate(0); }
+    background: #000; display: flex; align-items: center; 
+    justify-content: space-between; padding: 0 20px;
 }
