@@ -1,115 +1,143 @@
-// THE SYSTEM REGISTRY (All Apps Data)
 const REGISTRY = {
-    browser: { title: "Web Explorer", icon: "🌐", type: "app", content: `
-        <div class="browser-container">
-            <div class="browser-nav">
-                <input type="text" id="url-in" value="https://www.wikipedia.org" onkeypress="if(event.key==='Enter') this.parentElement.nextElementSibling.src=this.value">
-                <button onclick="this.previousElementSibling.parentElement.nextElementSibling.src=this.previousElementSibling.value">GO</button>
-            </div>
-            <iframe src="https://www.wikipedia.org"></iframe>
-        </div>`
+    browser: { title: "Web Explorer", icon: "🌐", content: `
+        <div class="browser-nav">
+            <input type="text" id="url-in" placeholder="Search Google or type URL..." onkeypress="if(event.key==='Enter') execSearch()">
+            <button onclick="execSearch()">Go</button>
+        </div>
+        <iframe id="b-frame" src="https://www.bing.com"></iframe>`
     },
-    hacker: { title: "Terminal", icon: "💀", type: "app", content: `
+    dungeon: { title: "Dungeon Gamblers", icon: "🃏", content: `
+        <iframe srcdoc="<html><head><base href='https://cdn.jsdelivr.net/gh/Stinkalistic/UGS@main/MISC/dungeongamble/'><style>body,html{margin:0;padding:0;overflow:hidden;background:black;}</style></head><body><script src='gamble.js'></script><canvas id='canvas' style='width:100vw; height:100vh;'></canvas><script>window.onload=function(){const c={'args':[],'canvasResizePolicy':2,'executable':'gamble','fileSizes':{'index.pck':97937408,'gamble.wasm':25658069},'focusCanvas':true};var e=new Engine(c);e.startGame();}</script></body></html>"></iframe>`
+    },
+    knights: { title: "Knights Battle", icon: "⚔️", content: `
+        <iframe srcdoc="<html><body style='margin:0;overflow:hidden;background:black;'><script src='https://cdn.jsdelivr.net/gh/pegege-classroom/swwq@main/Build/War The Knights Battle Arena Swords 3D.loader.js'></script><canvas id='u-canvas' style='width:100vw;height:100vh;'></canvas><script>const c={dataUrl:'https://cdn.jsdelivr.net/gh/pegege-classroom/swwq@main/Build/War The Knights Battle Arena Swords 3D.data.unityweb',frameworkUrl:'https://cdn.jsdelivr.net/gh/pegege-classroom/swwq@main/Build/War The Knights Battle Arena Swords 3D.framework.js.unityweb',codeUrl:'https://cdn.jsdelivr.net/gh/pegege-classroom/swwq@main/Build/War The Knights Battle Arena Swords 3D.wasm.unityweb',companyName:'BANZAI',productName:'War Knights'};createUnityInstance(document.querySelector('#u-canvas'),c);</script></body></html>"></iframe>`
+    },
+    hacker: { title: "Terminal", icon: "💀", content: `
         <div class="terminal">
-            <div id="h-log">[LOCAL NODE ACTIVE] Type 'print message' to hack the screen.</div>
+            <div id="h-log">[LOCAL NODE ACTIVE] Type 'print message' to broadcast.</div>
             <span style="color:#39ff14">root@uOS:~$ </span><input type="text" id="h-in" onkeypress="hackerExec(event)" style="background:none; border:none; color:#39ff14; outline:none; width:70%; font-family:monospace;">
         </div>`
     },
-    calc: { title: "Calculator", icon: "🔢", type: "app", content: `
-        <div style="padding:10px; background:#000; text-align:right; font-size:24px;" id="c-disp">0</div>
-        <div class="calc-grid">
-            ${['7','8','9','/','4','5','6','*','1','2','3','-','0','.','=','+'].map(v => `<button onclick="calc('${v}')">${v}</button>`).join('')}
+    calc: { title: "Calculator", icon: "🔢", content: `
+        <div style="padding:15px; background:#000; text-align:right; font-size:24px;" id="c-disp">0</div>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:5px; padding:10px;">
+            ${['7','8','9','/','4','5','6','*','1','2','3','-','0','.','=','+'].map(v=>`<button style='padding:15px;background:#333;color:white;border:none;' onclick="calc('${v}')">${v}</button>`).join('')}
         </div>`
     },
-    store: { title: "U-Store", icon: "🏪", type: "system", content: `
-        <div style="padding:15px;">
-            <h3>Available Apps</h3>
-            <div id="store-list"></div>
-        </div>`
-    },
-    settings: { title: "Settings", icon: "⚙️", type: "system", content: `
-        <div style="padding:15px;">
-            <h3>Theme</h3>
-            <button onclick="document.body.style.background='red'">Hacker Red</button>
-            <button onclick="document.body.style.background='black'">Void Black</button>
-            <button onclick="location.reload()">Reset OS</button>
+    store: { title: "U-Store", icon: "🏪", content: `
+        <div style="padding:20px;">
+            <h3>App Repository</h3>
+            <div id="store-target"></div>
         </div>`
     }
 };
 
 const INITIAL_APPS = ['store', 'browser', 'hacker'];
-const STORE_CATALOG = ['calc', 'settings'];
+const STORE_CATALOG = ['dungeon', 'knights', 'calc'];
 
-// 1. KERNEL INITIALIZATION
 window.onload = () => {
     INITIAL_APPS.forEach(id => createShortcut(id));
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 };
 
-// 2. WINDOW MANAGER
+function createShortcut(id) {
+    if(document.getElementById(`icon-${id}`)) return;
+    const desktop = document.getElementById('desktop');
+    const div = document.createElement('div');
+    div.className = 'shortcut'; div.id = `icon-${id}`;
+    div.onclick = () => openApp(id);
+    div.innerHTML = `<span>${REGISTRY[id].icon}</span><span>${REGISTRY[id].title}</span>`;
+    desktop.appendChild(div);
+}
+
 function openApp(id) {
     const app = REGISTRY[id];
     const winId = `win-${id}-${Math.floor(Math.random()*1000)}`;
     const win = document.createElement('div');
-    win.className = 'window';
-    win.id = winId;
-    win.style.top = "100px"; win.style.left = "200px";
-    win.style.width = "500px"; win.style.height = "400px";
+    win.className = 'window'; win.id = winId;
+    win.style.width = "600px"; win.style.height = "450px";
+    win.style.top = "50px"; win.style.left = "100px";
 
     win.innerHTML = `
         <div class="win-header">
-            <span>${app.icon} ${app.title}</span>
             <div class="win-controls">
-                <button onclick="document.getElementById('${winId}').classList.toggle('maximized')">□</button>
-                <button onclick="closeApp('${winId}')">X</button>
+                <button class="control-btn close" onclick="closeApp('${winId}')"></button>
+                <button class="control-btn max" onclick="toggleMax('${winId}')"></button>
+                <button class="control-btn min" onclick="alert('App minimized')"></button>
             </div>
+            <span>${app.icon} ${app.title}</span>
         </div>
         <div class="win-body">${id === 'store' ? renderStore() : app.content}</div>
         <div class="resizer"></div>
     `;
 
     document.getElementById('desktop').appendChild(win);
-    initDrag(win);
-    initResize(win);
-    addTab(app.title, winId);
+    initDrag(win); initResize(win); addTab(app.title, winId);
 }
 
-// 3. APP STORE SYSTEM
 function renderStore() {
-    let html = "";
-    STORE_CATALOG.forEach(id => {
-        html += `<div style="background:#222; margin-bottom:10px; padding:10px; border-radius:5px; display:flex; justify-content:space-between; align-items:center;">
+    return STORE_CATALOG.map(id => `
+        <div class="store-item">
             <span>${REGISTRY[id].icon} ${REGISTRY[id].title}</span>
-            <button onclick="createShortcut('${id}')" style="background:#0078d4; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer;">Install</button>
-        </div>`;
-    });
-    return html;
+            <button onclick="createShortcut('${id}')" style="background:#0078d4; color:white; border:none; padding:5px 12px; border-radius:4px; cursor:pointer;">Install</button>
+        </div>
+    `).join('');
 }
 
-function createShortcut(id) {
-    if(document.getElementById(`icon-${id}`)) return;
-    const desktop = document.getElementById('desktop');
-    const div = document.createElement('div');
-    div.className = 'shortcut';
-    div.id = `icon-${id}`;
-    div.onclick = () => openApp(id);
-    div.innerHTML = `<span>${REGISTRY[id].icon}</span><span>${REGISTRY[id].title}</span>`;
-    desktop.appendChild(div);
+// BROWSER GOOGLE SEARCH LOGIC
+window.execSearch = () => {
+    const val = document.getElementById('url-in').value;
+    const frame = document.getElementById('b-frame');
+    if (!val.startsWith('http')) {
+        frame.src = "https://www.bing.com/search?q=" + encodeURIComponent(val);
+    } else {
+        frame.src = val;
+    }
+};
+
+// HACKER BROADCAST LOGIC
+window.hackerExec = (e) => {
+    if(e.key === 'Enter') {
+        const input = document.getElementById('h-in');
+        if(input.value.startsWith('print ')) {
+            const msg = input.value.substring(6);
+            const overlay = document.createElement('div');
+            overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,0,0,0.9); z-index:10000; color:white; display:flex; align-items:center; justify-content:center; font-size:40px; text-align:center; padding:20px; font-family:monospace;";
+            overlay.innerHTML = `[BROADCAST INCOMING]<br>${msg.toUpperCase()}`;
+            document.body.appendChild(overlay);
+            setTimeout(() => overlay.remove(), 3000);
+        }
+        input.value = "";
+    }
+};
+
+// WINDOW CONTROLS
+window.closeApp = (id) => { 
+    document.getElementById(id).remove(); 
+    document.querySelector(`[data-ref="${id}"]`).remove();
+};
+
+window.toggleMax = (id) => {
+    document.getElementById(id).classList.toggle('maximized');
+};
+
+function addTab(title, id) {
+    const tab = document.createElement('div');
+    tab.className = 'tab'; tab.innerText = title; tab.setAttribute('data-ref', id);
+    document.getElementById('active-tabs').appendChild(tab);
 }
 
-// 4. RESIZE & DRAG ENGINES
+// DRAG & RESIZE ENGINES
 function initResize(win) {
     const resizer = win.querySelector('.resizer');
-    resizer.addEventListener('mousedown', (e) => {
+    resizer.onmousedown = (e) => {
         e.preventDefault();
-        window.addEventListener('mousemove', resize);
-        window.addEventListener('mouseup', stopResize);
-    });
-    function resize(e) {
-        win.style.width = (e.pageX - win.getBoundingClientRect().left) + 'px';
-        win.style.height = (e.pageY - win.getBoundingClientRect().top) + 'px';
-    }
-    function stopResize() { window.removeEventListener('mousemove', resize); }
+        window.onmousemove = (e) => {
+            win.style.width = (e.pageX - win.getBoundingClientRect().left) + 'px';
+            win.style.height = (e.pageY - win.getBoundingClientRect().top) + 'px';
+        };
+        window.onmouseup = () => { window.onmousemove = null; };
+    };
 }
 
 function initDrag(win) {
@@ -125,38 +153,6 @@ function initDrag(win) {
         document.onmouseup = () => { document.onmousemove = null; };
     };
 }
-
-// 5. BROADCAST SYSTEM (HACKING)
-window.hackerExec = (e) => {
-    if(e.key === 'Enter') {
-        const input = document.getElementById('h-in');
-        const log = document.getElementById('h-log');
-        if(input.value.startsWith('print ')) {
-            const msg = input.value.substring(6);
-            log.innerHTML += `<div>[BROADCASTING... OK]</div>`;
-            const overlay = document.createElement('div');
-            overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,255,0,0.9); z-index:10000; color:black; display:flex; align-items:center; justify-content:center; font-size:50px; font-weight:bold; font-family:monospace; text-align:center; padding:20px;";
-            overlay.innerHTML = `[ALERT]<br>${msg.toUpperCase()}`;
-            document.body.appendChild(overlay);
-            setTimeout(() => overlay.remove(), 3000);
-        }
-        input.value = "";
-    }
-}
-
-// 6. UTILS
-window.closeApp = (id) => { 
-    document.getElementById(id).remove(); 
-    document.querySelector(`[data-ref="${id}"]`).remove();
-};
-
-window.addTab = (title, id) => {
-    const tab = document.createElement('div');
-    tab.className = 'tab';
-    tab.innerText = title;
-    tab.setAttribute('data-ref', id);
-    document.getElementById('active-tabs').appendChild(tab);
-};
 
 window.calc = (v) => {
     const d = document.getElementById('c-disp');
