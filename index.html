@@ -3,26 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Untitled OS | AI & App Store</title>
+    <title>Untitled OS | Ultimate Edition</title>
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
     <div id="desktop">
-        <div class="shortcut" onclick="openApp('browser')">🦊<span>Firefox AI</span></div>
-        <div class="shortcut" onclick="openApp('store')">🏪<span>U-Store</span></div>
-        <div class="shortcut" onclick="openApp('repl')">🛠️<span>Code Lab</span></div>
-        <div class="shortcut" onclick="openApp('hacker')">💀<span>Ghost Net</span></div>
-    </div>
+        </div>
 
     <div id="taskbar">
-        <div class="start-btn" onclick="toggleStart()">U</div>
-        <div id="active-tasks"></div>
+        <div class="start-btn">U</div>
+        <div id="active-tabs"></div>
         <div id="clock">00:00:00</div>
-    </div>
-
-    <div id="start-menu" class="hidden">
-        <div class="start-item" onclick="openApp('settings')">Settings</div>
-        <div class="start-item" onclick="location.reload()">Restart System</div>
     </div>
 
     <script src="./script.js"></script>
