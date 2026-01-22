@@ -1,104 +1,166 @@
-const OS_APPS = {
-    browser: { title: "Firefox AI", content: `
-        <div class="browser-ui">
-            <div class="address-bar">
-                <span style="color:#ff7139">AI</span>
-                <input type="text" id="url-input" value="https://www.bing.com">
-                <button onclick="navigate()">Go</button>
+// THE SYSTEM REGISTRY (All Apps Data)
+const REGISTRY = {
+    browser: { title: "Web Explorer", icon: "🌐", type: "app", content: `
+        <div class="browser-container">
+            <div class="browser-nav">
+                <input type="text" id="url-in" value="https://www.wikipedia.org" onkeypress="if(event.key==='Enter') this.parentElement.nextElementSibling.src=this.value">
+                <button onclick="this.previousElementSibling.parentElement.nextElementSibling.src=this.previousElementSibling.value">GO</button>
             </div>
-            <div id="ai-insight" style="font-size:11px; color:#aaa; margin-bottom:5px;">AI: Waiting for URL...</div>
-            <iframe id="browser-frame" src="https://www.bing.com" style="width:100%; height:250px; background:white; border-radius:5px;"></iframe>
+            <iframe src="https://www.wikipedia.org"></iframe>
         </div>`
     },
-    store: { title: "U-Store", content: `
-        <div class="store-grid">
-            <div class="app-card"><h3>Snake</h3><button class="install-btn" onclick="installApp('Snake', '🐍')">Install</button></div>
-            <div class="app-card"><h3>Space Invaders</h3><button class="install-btn" onclick="installApp('Invaders', '👾')">Install</button></div>
-            <div class="app-card"><h3>Tetris</h3><button class="install-btn" onclick="installApp('Tetris', '🧱')">Install</button></div>
-            <div class="app-card"><h3>Note Pad</h3><button class="install-btn" onclick="installApp('Notes', '📝')">Install</button></div>
+    hacker: { title: "Terminal", icon: "💀", type: "app", content: `
+        <div class="terminal">
+            <div id="h-log">[LOCAL NODE ACTIVE] Type 'print message' to hack the screen.</div>
+            <span style="color:#39ff14">root@uOS:~$ </span><input type="text" id="h-in" onkeypress="hackerExec(event)" style="background:none; border:none; color:#39ff14; outline:none; width:70%; font-family:monospace;">
         </div>`
     },
-    repl: { title: "Code Lab", content: `
-        <textarea id="lab-code" style="width:100%; height:200px; background:#000; color:#38bdf8; font-family:monospace; padding:10px; border:none;">// Write JS here\nalert('System Online');</textarea>
-        <button onclick="executeCode()" style="width:100%; margin-top:10px; padding:10px; background:#059669; border:none; color:white; cursor:pointer;">RUN INJECTOR</button>`
+    calc: { title: "Calculator", icon: "🔢", type: "app", content: `
+        <div style="padding:10px; background:#000; text-align:right; font-size:24px;" id="c-disp">0</div>
+        <div class="calc-grid">
+            ${['7','8','9','/','4','5','6','*','1','2','3','-','0','.','=','+'].map(v => `<button onclick="calc('${v}')">${v}</button>`).join('')}
+        </div>`
     },
-    hacker: { title: "Ghost Net Terminal", content: `
-        <div id="hack-log" style="background:#000; color:#0f0; font-family:monospace; height:200px; padding:10px; overflow:auto;">[READY TO SCAN NODES]</div>
-        <input type="text" id="hack-in" onkeypress="handleHack(event)" style="width:100%; background:#000; color:#0f0; border:1px solid #0f0; outline:none;">`
+    store: { title: "U-Store", icon: "🏪", type: "system", content: `
+        <div style="padding:15px;">
+            <h3>Available Apps</h3>
+            <div id="store-list"></div>
+        </div>`
+    },
+    settings: { title: "Settings", icon: "⚙️", type: "system", content: `
+        <div style="padding:15px;">
+            <h3>Theme</h3>
+            <button onclick="document.body.style.background='red'">Hacker Red</button>
+            <button onclick="document.body.style.background='black'">Void Black</button>
+            <button onclick="location.reload()">Reset OS</button>
+        </div>`
     }
 };
 
+const INITIAL_APPS = ['store', 'browser', 'hacker'];
+const STORE_CATALOG = ['calc', 'settings'];
+
+// 1. KERNEL INITIALIZATION
+window.onload = () => {
+    INITIAL_APPS.forEach(id => createShortcut(id));
+    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+};
+
+// 2. WINDOW MANAGER
 function openApp(id) {
-    const app = OS_APPS[id];
+    const app = REGISTRY[id];
+    const winId = `win-${id}-${Math.floor(Math.random()*1000)}`;
     const win = document.createElement('div');
     win.className = 'window';
-    win.style.top = "80px"; win.style.left = "100px";
+    win.id = winId;
+    win.style.top = "100px"; win.style.left = "200px";
+    win.style.width = "500px"; win.style.height = "400px";
+
     win.innerHTML = `
-        <div class="win-header"><strong>${app.title}</strong><button onclick="this.closest('.window').remove()">✕</button></div>
-        <div class="win-body">${app.content}</div>
+        <div class="win-header">
+            <span>${app.icon} ${app.title}</span>
+            <div class="win-controls">
+                <button onclick="document.getElementById('${winId}').classList.toggle('maximized')">□</button>
+                <button onclick="closeApp('${winId}')">X</button>
+            </div>
+        </div>
+        <div class="win-body">${id === 'store' ? renderStore() : app.content}</div>
+        <div class="resizer"></div>
     `;
+
     document.getElementById('desktop').appendChild(win);
-    dragElement(win);
+    initDrag(win);
+    initResize(win);
+    addTab(app.title, winId);
 }
 
-// AI Browser Logic
-window.navigate = () => {
-    const url = document.getElementById('url-input').value;
-    document.getElementById('ai-insight').innerText = "AI: Analyzing " + url + " for safety and speed...";
-    setTimeout(() => {
-        document.getElementById('browser-frame').src = url;
-        document.getElementById('ai-insight').innerText = "AI: Page loaded. Firefox UI optimization complete.";
-    }, 1200);
+// 3. APP STORE SYSTEM
+function renderStore() {
+    let html = "";
+    STORE_CATALOG.forEach(id => {
+        html += `<div style="background:#222; margin-bottom:10px; padding:10px; border-radius:5px; display:flex; justify-content:space-between; align-items:center;">
+            <span>${REGISTRY[id].icon} ${REGISTRY[id].title}</span>
+            <button onclick="createShortcut('${id}')" style="background:#0078d4; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer;">Install</button>
+        </div>`;
+    });
+    return html;
 }
 
-// U-Store Installation Logic
-window.installApp = (name, icon) => {
+function createShortcut(id) {
+    if(document.getElementById(`icon-${id}`)) return;
     const desktop = document.getElementById('desktop');
-    const shortcut = document.createElement('div');
-    shortcut.className = 'shortcut';
-    shortcut.innerHTML = `${icon}<span>${name}</span>`;
-    shortcut.onclick = () => alert("Launching " + name + "...");
-    desktop.appendChild(shortcut);
-    alert(name + " has been installed!");
+    const div = document.createElement('div');
+    div.className = 'shortcut';
+    div.id = `icon-${id}`;
+    div.onclick = () => openApp(id);
+    div.innerHTML = `<span>${REGISTRY[id].icon}</span><span>${REGISTRY[id].title}</span>`;
+    desktop.appendChild(div);
 }
 
-// Code Lab (Replit) Logic
-window.executeCode = () => {
-    try { new Function(document.getElementById('lab-code').value)(); } 
-    catch(e) { alert("Error: " + e.message); }
+// 4. RESIZE & DRAG ENGINES
+function initResize(win) {
+    const resizer = win.querySelector('.resizer');
+    resizer.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        window.addEventListener('mousemove', resize);
+        window.addEventListener('mouseup', stopResize);
+    });
+    function resize(e) {
+        win.style.width = (e.pageX - win.getBoundingClientRect().left) + 'px';
+        win.style.height = (e.pageY - win.getBoundingClientRect().top) + 'px';
+    }
+    function stopResize() { window.removeEventListener('mousemove', resize); }
 }
 
-// Ghost Net Logic
-window.handleHack = (e) => {
+function initDrag(win) {
+    const header = win.querySelector('.win-header');
+    header.onmousedown = (e) => {
+        if(win.classList.contains('maximized')) return;
+        let ox = e.clientX - win.offsetLeft;
+        let oy = e.clientY - win.offsetTop;
+        document.onmousemove = (e) => {
+            win.style.left = (e.clientX - ox) + 'px';
+            win.style.top = (e.clientY - oy) + 'px';
+        };
+        document.onmouseup = () => { document.onmousemove = null; };
+    };
+}
+
+// 5. BROADCAST SYSTEM (HACKING)
+window.hackerExec = (e) => {
     if(e.key === 'Enter') {
-        const log = document.getElementById('hack-log');
-        log.innerHTML += `<div>> ${document.getElementById('hack-in').value}</div>`;
-        if(document.getElementById('hack-in').value === 'attack') {
-            log.innerHTML += `<div style="color:red">SENDING VIRUS TO SERVER...</div>`;
+        const input = document.getElementById('h-in');
+        const log = document.getElementById('h-log');
+        if(input.value.startsWith('print ')) {
+            const msg = input.value.substring(6);
+            log.innerHTML += `<div>[BROADCASTING... OK]</div>`;
+            const overlay = document.createElement('div');
+            overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,255,0,0.9); z-index:10000; color:black; display:flex; align-items:center; justify-content:center; font-size:50px; font-weight:bold; font-family:monospace; text-align:center; padding:20px;";
+            overlay.innerHTML = `[ALERT]<br>${msg.toUpperCase()}`;
+            document.body.appendChild(overlay);
+            setTimeout(() => overlay.remove(), 3000);
         }
-        document.getElementById('hack-in').value = "";
+        input.value = "";
     }
 }
 
-// Draggable Window Logic
-function dragElement(elmnt) {
-    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    elmnt.querySelector('.win-header').onmousedown = dragMouseDown;
-    function dragMouseDown(e) {
-        e.preventDefault();
-        pos3 = e.clientX; pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        document.onmousemove = elementDrag;
-    }
-    function elementDrag(e) {
-        e.preventDefault();
-        pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
-        pos3 = e.clientX; pos4 = e.clientY;
-        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-    }
-    function closeDragElement() { document.onmouseup = null; document.onmousemove = null; }
-}
+// 6. UTILS
+window.closeApp = (id) => { 
+    document.getElementById(id).remove(); 
+    document.querySelector(`[data-ref="${id}"]`).remove();
+};
 
-// Clock
-setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+window.addTab = (title, id) => {
+    const tab = document.createElement('div');
+    tab.className = 'tab';
+    tab.innerText = title;
+    tab.setAttribute('data-ref', id);
+    document.getElementById('active-tabs').appendChild(tab);
+};
+
+window.calc = (v) => {
+    const d = document.getElementById('c-disp');
+    if(v === '=') { try{ d.innerText = eval(d.innerText); } catch{ d.innerText = "Error"; } }
+    else if(d.innerText === '0' || d.innerText === 'Error') { d.innerText = v; }
+    else { d.innerText += v; }
+};
