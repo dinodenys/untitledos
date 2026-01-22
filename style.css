@@ -1,47 +1,54 @@
-* { box-sizing: border-box; }
+* { box-sizing: border-box; user-select: none; }
 body, html { 
     margin: 0; padding: 0; height: 100%; overflow: hidden; 
     background: radial-gradient(circle, #1a1c2c 0%, #07090f 100%);
-    font-family: 'Segoe UI', system-ui, sans-serif; color: white;
+    font-family: 'Segoe UI', sans-serif; color: white;
 }
 
 #desktop { 
-    width: 100vw; height: calc(100vh - 50px); position: relative; 
-    padding: 30px; display: flex; flex-direction: column; gap: 20px; flex-wrap: wrap; 
+    height: calc(100vh - 50px); padding: 25px; position: relative; 
+    display: flex; flex-direction: column; flex-wrap: wrap; gap: 20px; align-content: flex-start;
 }
 
-.shortcut { 
-    width: 85px; text-align: center; cursor: pointer; padding: 10px; 
-    border-radius: 12px; transition: 0.3s; 
-}
-.shortcut:hover { background: rgba(255,255,255,0.1); transform: translateY(-3px); }
-.shortcut span { display: block; font-size: 11px; margin-top: 8px; font-weight: 500; }
+.shortcut { width: 80px; text-align: center; cursor: pointer; transition: 0.2s; }
+.shortcut:hover { transform: scale(1.1); }
+.shortcut span:first-child { font-size: 40px; display: block; }
+.shortcut span:last-child { font-size: 11px; margin-top: 5px; display: block; text-shadow: 1px 1px 3px black; }
 
-.window {
-    position: absolute; min-width: 500px; min-height: 400px;
-    background: rgba(15, 17, 26, 0.9); backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
-    display: flex; flex-direction: column; box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+.window { 
+    position: absolute; min-width: 300px; min-height: 200px; 
+    background: rgba(25, 25, 35, 0.9); backdrop-filter: blur(15px); 
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; 
+    display: flex; flex-direction: column; box-shadow: 0 15px 45px rgba(0,0,0,0.7); 
+    z-index: 10; overflow: hidden;
+}
+
+/* Resize Handle */
+.resizer {
+    width: 15px; height: 15px; background: transparent;
+    position: absolute; right: 0; bottom: 0; cursor: nwse-resize;
     z-index: 100;
 }
 
-.win-header { 
-    background: rgba(255,255,255,0.05); padding: 12px; 
-    display: flex; justify-content: space-between; align-items: center;
-    cursor: move; border-radius: 12px 12px 0 0;
-}
+.window.maximized { width: 100% !important; height: calc(100vh - 50px) !important; top: 0 !important; left: 0 !important; border-radius: 0; }
 
-.win-body { flex: 1; padding: 15px; overflow: auto; }
+.win-header { background: rgba(255,255,255,0.05); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; cursor: move; }
+.win-controls button { background: none; border: none; color: white; cursor: pointer; font-weight: bold; margin-left: 10px; opacity: 0.6; }
+.win-controls button:hover { opacity: 1; }
 
-/* Firefox AI Styling */
-.browser-ui { display: flex; flex-direction: column; height: 100%; }
-.address-bar { display: flex; gap: 8px; margin-bottom: 10px; background: #222; padding: 5px; border-radius: 5px; }
-.address-bar input { flex: 1; background: transparent; border: none; color: white; outline: none; }
+.win-body { flex: 1; padding: 0; overflow: hidden; position: relative; }
 
-/* U-Store Styling */
-.store-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-.app-card { background: #23263a; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #333; }
-.install-btn { background: #3b82f6; border: none; color: white; padding: 6px 15px; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+/* Apps Styling */
+.browser-container { display: flex; flex-direction: column; height: 100%; }
+.browser-nav { display: flex; gap: 5px; padding: 8px; background: #1a1a1a; }
+.browser-nav input { flex: 1; background: #000; color: #fff; border: 1px solid #444; padding: 5px; border-radius: 4px; outline: none; }
 
-#taskbar { position: fixed; bottom: 0; width: 100%; height: 50px; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-top: 1px solid #333; }
-.hidden { display: none; }
+iframe { width: 100%; height: 100%; border: none; background: white; }
+
+.terminal { background: black; color: #39ff14; font-family: monospace; height: 100%; padding: 15px; overflow-y: auto; font-size: 14px; }
+.calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; padding: 15px; }
+.calc-grid button { padding: 15px; background: #333; color: white; border: none; border-radius: 5px; cursor: pointer; }
+
+#taskbar { position: fixed; bottom: 0; width: 100%; height: 50px; background: rgba(0,0,0,0.9); display: flex; align-items: center; padding: 0 20px; border-top: 1px solid #333; z-index: 1000; }
+#active-tabs { flex: 1; display: flex; gap: 10px; margin-left: 20px; }
+.tab { background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 5px; font-size: 12px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
