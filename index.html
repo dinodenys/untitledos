@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Untitled OS | Secure Kernel</title>
+    <title>Untitled OS | Secure</title>
     <link rel="stylesheet" href="./style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython_stdlib.js"></script>
 </head>
-<body>
+<body onload="brython()">
     <div id="boot-screen">
         <div class="login-box">
-            <div class="shield-icon">🔒</div>
-            <input type="text" id="username" autocomplete="off">
+            <div class="shield">🔒</div>
+            <input type="text" id="username" autocomplete="off" spellcheck="false">
             <input type="password" id="password" autocomplete="off">
             <button onclick="attemptLogin()">ENTER</button>
             <div id="login-err"></div>
