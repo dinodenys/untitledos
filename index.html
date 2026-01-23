@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Untitled OS | Secure</title>
+    <title>Untitled OS | Omni Kernel</title>
     <link rel="stylesheet" href="./style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython_stdlib.js"></script>
@@ -12,8 +11,8 @@
     <div id="boot-screen">
         <div class="login-box">
             <div class="shield">🔒</div>
-            <input type="text" id="username" autocomplete="off" spellcheck="false">
-            <input type="password" id="password" autocomplete="off">
+            <input type="text" id="username" placeholder="Username" autocomplete="off">
+            <input type="password" id="password" placeholder="Password" autocomplete="off">
             <button onclick="attemptLogin()">ENTER</button>
             <div id="login-err"></div>
         </div>
