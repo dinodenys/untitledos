@@ -2,22 +2,21 @@
 body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; color: #fff; }
 
 #boot-screen { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 10000; }
-.login-box { width: 260px; text-align: center; }
-.shield { font-size: 30px; color: #222; margin-bottom: 20px; }
-.login-box input { display: block; width: 100%; margin: 10px 0; padding: 12px; background: #050505; border: 1px solid #111; color: #fff; outline: none; border-radius: 4px; }
-.login-box button { width: 100%; padding: 12px; background: #111; color: #444; border: 1px solid #222; cursor: pointer; border-radius: 4px; font-weight: bold; }
+.login-box { width: 280px; text-align: center; border: 1px solid #111; padding: 30px; }
+.login-box input { display: block; width: 100%; margin: 10px 0; padding: 12px; background: #050505; border: 1px solid #222; color: #fff; outline: none; }
+.login-box button { width: 100%; padding: 12px; background: #111; color: #666; border: 1px solid #222; cursor: pointer; font-weight: bold; }
 .login-box button:hover { background: #fff; color: #000; }
 
 #desktop { height: calc(100vh - 50px); padding: 20px; position: relative; display: flex; flex-direction: column; flex-wrap: wrap; gap: 20px; align-content: flex-start; }
-.shortcut { width: 80px; text-align: center; cursor: pointer; transition: 0.2s; }
-.shortcut:hover { transform: scale(1.1); }
-.shortcut span:first-child { font-size: 40px; display: block; }
-.shortcut span:last-child { font-size: 10px; display: block; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
+.shortcut { width: 85px; text-align: center; cursor: pointer; padding: 10px; border-radius: 5px; }
+.shortcut:hover { background: rgba(255,255,255,0.1); }
+.shortcut span:first-child { font-size: 45px; display: block; margin-bottom: 5px; }
+.shortcut span:last-child { font-size: 10px; display: block; text-transform: uppercase; opacity: 0.8; }
 
-.window { position: absolute; min-width: 400px; min-height: 300px; background: #0a0a0a; border: 1px solid #222; display: flex; flex-direction: column; z-index: 10; border-radius: 6px; overflow: hidden; box-shadow: 0 20px 50px #000; }
-.win-header { background: #111; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; cursor: move; border-bottom: 1px solid #222; }
+.window { position: absolute; min-width: 400px; min-height: 300px; background: #0a0a0a; border: 1px solid #333; display: flex; flex-direction: column; z-index: 10; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px #000; }
+.win-header { background: #1a1a1a; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; cursor: move; }
 .win-body { flex: 1; background: #000; overflow: hidden; position: relative; }
 .close-btn { background: #ff5f56; width: 12px; height: 12px; border: none; border-radius: 50%; cursor: pointer; }
 
-#taskbar { position: fixed; bottom: 0; width: 100%; height: 50px; background: #000; border-top: 1px solid #111; display: flex; align-items: center; padding: 0 15px; z-index: 999; }
-.unlocked { display: none !important; }
+#taskbar { position: fixed; bottom: 0; width: 100%; height: 50px; background: #000; border-top: 1px solid #222; display: flex; align-items: center; padding: 0 20px; z-index: 999; }
+#clock { margin-left: auto; font-family: monospace; opacity: 0.5; }
